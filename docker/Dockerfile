@@ -1,6 +1,9 @@
 FROM php:7.3-fpm-stretch
 LABEL maintainer="guillaumebriday@gmail.com"
 
+COPY ./laravel-cron.sh /usr/local/bin/laravel-cron
+RUN chmod a+x /usr/local/bin/laravel-cron
+
 # Installing dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
@@ -10,6 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libfreetype6-dev \
     libmagickwand-dev \
     libzip-dev \
+    nano \
     zip \
     jpegoptim optipng pngquant gifsicle
 
