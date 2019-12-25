@@ -1,0 +1,53 @@
+version: '3'
+
+services:
+  app:
+    build: .cloud/docker
+    image: laravel-app
+    container_name: ${APP_NAME}-app
+    depends_on:
+      - mysql
+      - redis
+    volumes:
+      - ${APP_PATH_HOST}:/application:cached
+
+  queue:
+    build: .cloud/docker
+    image: laravel-app
+    container_name: ${APP_NAME}-queue
+    command: php artisan queue:work
+    depends_on:
+      - mysql
+    volumes:
+      - ${APP_PATH_HOST}:/application:cached
+
+  mysql:
+    image: mariadb
+    container_name: ${APP_NAME}-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: beauty
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+    - 3306:3306
+    volumes:
+      - ${DB_PATH_HOST}:/var/lib/mysql:cached
+
+  nginx:
+    image: nginx:alpine
+    container_name: ${APP_NAME}-nginx
+    ports:
+      - "8000:8000"
+    volumes:
+      - .cloud/nginx/nginx.conf:/etc/nginx/conf.d/default.conf:cached
+      - ${APP_PATH_HOST}:/application:cached
+    depends_on:
+      - app
+
+  redis:
+    image: redis:alpine
+    container_name: ${APP_NAME}-redis
+    ports:
+      - "6379:6379"
