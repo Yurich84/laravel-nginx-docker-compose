@@ -31,6 +31,17 @@ services:
     volumes:
       - ${APP_PATH_HOST}:/application:cached
 
+  laravel-echo-server:
+    build: ./laravel-echo-server
+    image: laravel-echo-server
+    container_name: ${APP_NAME}-echo
+    command: laravel-echo-server start
+    ports:
+      - "6001:6001"
+    depends_on:
+      - app
+      - redis
+
   mysql:
     image: mariadb
     container_name: ${APP_NAME}-mysql
@@ -55,6 +66,7 @@ services:
       - ${APP_PATH_HOST}:/application:cached
     depends_on:
       - app
+      - mysql
 
   redis:
     image: redis:alpine
