@@ -11,31 +11,33 @@ services:
     volumes:
       - ${APP_PATH_HOST}:/application:cached
 
-  queue:
-    build: ./docker
-    image: laravel-app
-    container_name: ${APP_NAME}-queue
-    command: php artisan queue:work --verbose --tries=3 --timeout=90
-    depends_on:
-      - mysql
-    volumes:
-      - ${APP_PATH_HOST}:/application:cached
+  # queue:
+  #   build: ./docker
+  #   image: laravel-app
+  #   container_name: ${APP_NAME}-queue
+  #   command: php artisan queue:work --verbose --tries=3 --timeout=90
+  #   depends_on:
+  #     - mysql
+  #   volumes:
+  #     - ${APP_PATH_HOST}:/application:cached
 
-  schedule:
-    build: ./docker
-    image: laravel-app
-    container_name: ${APP_NAME}-schedule
-    command: laravel-cron
-    depends_on:
-      - mysql
-    volumes:
-      - ${APP_PATH_HOST}:/application:cached
+  # schedule:
+  #   build: ./docker
+  #   image: laravel-app
+  #   container_name: ${APP_NAME}-schedule
+  #   command: laravel-cron
+  #   depends_on:
+  #     - mysql
+  #   volumes:
+  #     - ${APP_PATH_HOST}:/application:cached
 
   laravel-echo-server:
     build: ./laravel-echo-server
     image: laravel-echo-server
     container_name: ${APP_NAME}-echo
-    command: laravel-echo-server start
+    command: laravel-echo-server start --dir=/node_app
+    volumes:
+      - ${APP_PATH_HOST}:/application:cached
     ports:
       - "6001:6001"
     depends_on:
@@ -47,9 +49,9 @@ services:
     container_name: ${APP_NAME}-mysql
     restart: always
     environment:
-      MYSQL_DATABASE: beauty
+      MYSQL_DATABASE: default
       MYSQL_USER: user
-      MYSQL_PASSWORD: user
+      MYSQL_PASSWORD: secret
       MYSQL_ROOT_PASSWORD: root
     ports:
     - 3306:3306
